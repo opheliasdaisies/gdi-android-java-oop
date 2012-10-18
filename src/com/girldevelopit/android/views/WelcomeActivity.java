@@ -51,18 +51,35 @@ public class WelcomeActivity extends Activity
     	3. when someone logs out.
     */
     private void initElements(){
+        usernameField =
+                (EditText)this.findViewById(R.id.usernameField);
+        login =
+                (Button)this.findViewById(R.id.login);
+        logout =
+                (Button)this.findViewById(R.id.logout);
+        welcomeText =
+                (TextView)this.findViewById(R.id.welcomeText);
+
         //set the value of our layout elements to match the ids we gave them on the layout
 
         //there are two cases to check fpr no username
         //a null value which means no data at all
         //an empty string, so there is data but to a person it looks like nothing
         if (app.getUsername() == null || app.getUsername().equals("")){
+            usernameField.setVisibility(View.VISIBLE);
+            login.setVisibility(View.VISIBLE);
+            logout.setVisibility(View.GONE);
+            welcomeText.setText("Please login to add pictures to the gallery.");
             /*if there is no username, show the edittext, the save username button,
                     change the welcome text to something thoat will let a user know why they should log in,
                     and hides the logout button
              */
         }
         else{
+            usernameField.setVisibility(View.GONE);
+            login.setVisibility(View.GONE);
+            logout.setVisibility(View.VISIBLE);
+            welcomeText.setText("Welcome back, "+app.getUsername() + "!");
             /*
                 else the user is logged in.
                 In that case hide the editext and login button,
@@ -82,6 +99,17 @@ public class WelcomeActivity extends Activity
         //to turn that data int a string, you will use .toString()
         //then, see if that string is an empty string .equals("");
         if(usernameField.getText().toString().equals("")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Please enter your username.")
+                    .setCancelable(false)
+                    .setNegativeButton("Ok", new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
             /*
                 if there is no username entered, build an alert with a message prompting the user
                  to enter something into the field. set the NegativeButton to have an onclick listener
@@ -90,6 +118,10 @@ public class WelcomeActivity extends Activity
 
         }
         else{
+            app.setUsername(usernameField.getText().toString());
+            usernameField.setText("");
+            initElements();
+
             /*
                 if there was data in the text box,
                 save the username in the textbox and
@@ -104,6 +136,8 @@ public class WelcomeActivity extends Activity
     */
 
     public void logout(View view){
+        app.setUsername("");
+        initElements();
 
     }
     /*
